@@ -18,5 +18,5 @@ mongoose.connect('mongodb+srv://ProyectoCheco:proyectoch3c0@proyectocheco-v8da3.
         });
     })
     .catch((err) => {
-        console.log(err);
+        console.log(err, '');
     })
