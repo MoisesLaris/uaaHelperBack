@@ -1,4 +1,4 @@
-'use strinc'
+'use strict'
 
 var mongoose = require('mongoose');
 var app = require('./app');
