@@ -5,6 +5,7 @@
     "main": "index.js",
     "scripts": {
         "start": "node index.js",
+        "start:dev": "nodemon index.js",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "author": "MLS - LFGG - DPTQ",
@@ -16,7 +17,9 @@
         "express": "^4.17.1",
         "jwt-simple": "^0.5.6",
         "moment": "^2.27.0",
-        "mongoose": "^5.9.27",
+        "mongoose": "^5.9.27"
+    },
+    "devDependencies": {
         "nodemon": "^2.0.4"
     }
 }
