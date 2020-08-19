@@ -13,7 +13,7 @@ mongoose.connect('mongodb+srv://ProyectoCheco:proyectoch3c0@proyectocheco-v8da3.
         console.log('Conexión exitosa! Gracias al moisi precioso');
 
         //Crear servidor
-        app.listen(port, () => {
+        app.listen(process.env.PORT || port, () => {
             console.log("Servidor corriendo en localhost:3800");
         });
     })
