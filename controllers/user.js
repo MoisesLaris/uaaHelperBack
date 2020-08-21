@@ -20,7 +20,7 @@ function pruebas(req, res) {
 function newUser(req, res) {
     var params = req.body;
     var user = new User();
-
+    console.log(params);
     if (params.nombre && params.apellidos && params.email && params.password) {
         user.nombre = params.nombre;
         user.apellidos = params.apellidos;
@@ -38,9 +38,9 @@ function newUser(req, res) {
                 bcrypt.hash(params.password, null, null, (err, hash) => {
                     user.password = hash;
                     user.save((err, userStored) => {
-                        if (err) return err.status(500).send('Error al guardar el usuario');
+                        if (err) return err.status(500).send({ message: 'Error al guardar el usuario' });
                         if (userStored) {
-                            res.status(200).send({ user: userStored });
+                            res.status(200).send({ success: true, message: 'Usuario registrado' });
                         } else {
                             res.status(500).send({ message: 'No se ha registrado el usuario' });
                         }
