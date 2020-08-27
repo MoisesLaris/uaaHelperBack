@@ -1,6 +1,7 @@
 'use strict'
 
 var Tipo = require('../models/tipoPublicacion');
+var Publicacion = require('../models/publicacion');
 
 function newTipo(req, res) {
     var params = req.body;
@@ -26,9 +27,50 @@ function newTipo(req, res) {
 
 
     }
+}
 
+function editTipo(req, res) {
+    var params = req.body;
+    params.nombre = params.nombre.toLowerCase();
+
+    Tipo.findByIdAndUpdate(params.id, params, { new: true }, (err, tipoEdited) => {
+        if (err) return res.status(200).send({ message: 'Error en la peticion', success: false });
+
+        if (tipoEdited) {
+            return res.status(200).send({ message: 'Tipo editado correctamente', success: true });
+        } else {
+            return res.status(200).send({ message: 'No se ha editado tipo', success: false });
+        }
+    });
+}
+
+async function deleteTipo(req, res) {
+    var params = req.body;
+    var tipoId = params.id;
+
+    var publicacionesCounter = await getPublicaciones(tipoId);
+    if (publicacionesCounter > 0) {
+        return res.status(200).send({ message: 'No se puede borrar tipo ya que está ligado a publicaciones', success: false });
+    }
+
+    Tipo.deleteOne({ _id: tipoId }, err => {
+        if (err) return res.status(200).send({ message: 'Error al eliminar tipo', success: false });
+
+        return res.status(200).send({ message: 'Tipo eliminado', success: true });
+    })
+}
+
+async function getPublicaciones(tipoId) {
+    var publicaciones = await Publicacion.countDocuments({ idTipo: tipoId }, (err, counter) => {
+        if (err) return handleError(err);
+        console.log('Count is ' + counter);
+        return counter;
+    });
+    return publicaciones;
 }
 
 module.exports = {
-    newTipo
+    newTipo,
+    editTipo,
+    deleteTipo
 }
