@@ -7,6 +7,7 @@ var app = express();
 
 //Cargar rutas
 var user_routes = require('./routes/user');
+var tipo_routes = require('./routes/tipoPublicacion')
 
 //middlewares
 
@@ -17,6 +18,7 @@ app.use(bodyParser.json());
 
 //rutas
 app.use('/api', user_routes);
+app.use('/api', tipo_routes);
 
 //Exportar
 

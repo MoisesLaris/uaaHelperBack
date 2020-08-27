@@ -42,7 +42,7 @@ function newUser(req, res) {
                         if (userStored) {
                             res.status(200).send({ success: true, message: 'Usuario registrado' });
                         } else {
-                            res.status(500).send({ message: 'No se ha registrado el usuario' });
+                            res.status(200).send({ success: true, message: 'No se ha registrado el usuario' });
                         }
                     })
                 });
