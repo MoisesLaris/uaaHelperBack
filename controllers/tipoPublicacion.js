@@ -2,7 +2,7 @@
 
 var Tipo = require('../models/tipoPublicacion');
 var Publicacion = require('../models/publicacion');
-
+// nuevo tipo
 function newTipo(req, res) {
     var params = req.body;
     var tipo = new Tipo();
@@ -28,7 +28,7 @@ function newTipo(req, res) {
 
     }
 }
-
+//editar tipo
 function editTipo(req, res) {
     var params = req.body;
     params.nombre = params.nombre.toLowerCase();
@@ -43,7 +43,31 @@ function editTipo(req, res) {
         }
     });
 }
+//obtener todos los tipos
+function getAllTipo(req, res) {
+    Tipo.find((err, tipos) => {
+        if (err) return res.status(200).send({ message: "Error al recuperar tipos de publicaciones", success: false });
+        if (!tipos) return res.status(200).send({ message: "No hay tipos disponibles", success: false });
 
+        return res.status(200).send({
+            tipos
+        });
+    }).sort('_id');
+}
+
+//obtener tipo por id
+function getTipoById(req, res) {
+    var tipoId = req.params.id;
+    Tipo.findById(tipoId, (err, tipo) => {
+        if (err) return res.status(200).send({ message: "Error al buscar tipo de publicacion", success: false });
+        if (!tipo) return res.status(200).send({ message: "No se ha encontrado tipo de publicacion", success: false });
+        return res.status(200).send({
+            tipo
+        });
+    });
+}
+
+//borrar tipo
 async function deleteTipo(req, res) {
     var params = req.body;
     var tipoId = params.id;
@@ -72,5 +96,7 @@ async function getPublicaciones(tipoId) {
 module.exports = {
     newTipo,
     editTipo,
-    deleteTipo
+    deleteTipo,
+    getAllTipo,
+    getTipoById
 }
