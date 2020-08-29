@@ -8,7 +8,9 @@ var md_auth = require('../middlewares/authenticated');
 
 api.get('/home', UserController.home);
 api.post('/pruebas', md_auth.ensureAuth, UserController.pruebas);
-api.post('/newUser', UserController.newUser);
-api.post('/login', UserController.loginUser);
+api.post('/usuario/newUser', UserController.newUser);
+api.post('/usuario/login', UserController.loginUser);
+api.get('/usuario/getUsuarios', UserController.getAllUsers);
+api.get('/usuario/getUsuario/:id', UserController.getUserById);
 
 module.exports = api;

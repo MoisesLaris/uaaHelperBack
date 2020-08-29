@@ -25,6 +25,7 @@ function newUser(req, res) {
         user.nombre = params.nombre;
         user.apellidos = params.apellidos;
         user.email = params.email.toLowerCase();
+        user.isAdmin = false;
 
         User.findOne({ email: user.email.toLowerCase() }).exec((err, users) => {
             if (err) return res.status(500).send({ message: 'Error en la peticion' });
@@ -87,10 +88,38 @@ function loginUser(req, res) {
     })
 }
 
+function getAllUsers(req, res) {
+    User.find((err, usuarios) => {
+        if (err) return res.status(200).send({ message: 'Error al obtener usuarios', success: false });
+        if (!usuarios) return res.status(200).send({ message: 'No se encontró ningún usuario', success: false });
+        usuarios.forEach(usuario => {
+            usuario.password = undefined;
+        });
+        return res.status(200).send({
+            usuarios
+        });
+    });
+}
+
+function getUserById(req, res) {
+    var idUser = req.params.id;
+    User.findById(idUser, (err, usuario) => {
+        if (err) return res.status(200).send({ message: 'No se encontró el usuario', success: false });
+        if (!usuario) return res.status(200).send({ message: 'No se encontró el usuario', success: false });
+        usuario.password = undefined;
+        return res.status(200).send({
+            usuario
+        });
+    });
+}
+
 
 module.exports = {
     home,
     pruebas,
     newUser,
-    loginUser
+    loginUser,
+    getAllUsers,
+    getUserById
+
 }

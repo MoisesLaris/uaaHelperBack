@@ -11,8 +11,8 @@ var PublicacionSchema = Schema({
     titulo: { type: String },
     mensaje: { type: String },
     idUser: { type: Schema.ObjectId, ref: 'User' },
-    idTipo: { type: Schema.ObjectId, ref: 'Tipo' },
-    users: [User.schema],
+    tipoPublicacion: { type: Schema.ObjectId, ref: 'Tipo' },
+    users: [{ type: Schema.ObjectId, ref: 'User' }],
     comentarios: [Comentario.schema]
 });
 

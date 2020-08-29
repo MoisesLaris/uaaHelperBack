@@ -24,8 +24,8 @@ function newTipo(req, res) {
                 });
             }
         });
-
-
+    } else {
+        return res.status(200).send({ message: 'Se requieren todos los campos para crear un nuevo tipo', success: false });
     }
 }
 //editar tipo
