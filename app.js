@@ -5,6 +5,12 @@ var bodyParser = require('body-parser');
 
 var app = express();
 
+app.use(bodyParser.json({ limit: '5mb' }));
+app.use(bodyParser.urlencoded({ // to support URL-encoded bodies
+    limit: '5mb',
+    extended: true
+}));
+
 //Cargar rutas
 var user_routes = require('./routes/user');
 var tipo_routes = require('./routes/tipoPublicacion');

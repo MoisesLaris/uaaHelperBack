@@ -13,7 +13,8 @@ var PublicacionSchema = Schema({
     idUser: { type: Schema.ObjectId, ref: 'User' },
     tipoPublicacion: { type: Schema.ObjectId, ref: 'Tipo' },
     users: [{ type: Schema.ObjectId, ref: 'User' }],
-    comentarios: [Comentario.schema]
+    comentarios: [Comentario.schema],
+    image: { type: String }
 });
 
 module.exports = mongoose.model('Publicacion', PublicacionSchema, "publicacion");

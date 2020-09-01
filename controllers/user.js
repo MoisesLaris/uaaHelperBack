@@ -3,6 +3,9 @@
 var bcrypt = require('bcrypt-nodejs');
 var User = require('../models/user');
 var jwt = require('../services/jwt');
+var fs = require('fs');
+var path = require('path');
+var im = require('imagemagick');
 
 function home(req, res) {
     res.status(200).send({
@@ -26,6 +29,7 @@ function newUser(req, res) {
         user.apellidos = params.apellidos;
         user.email = params.email.toLowerCase();
         user.isAdmin = false;
+        user.image = null;
 
         User.findOne({ email: user.email.toLowerCase() }).exec((err, users) => {
             if (err) return res.status(500).send({ message: 'Error en la peticion' });
@@ -113,6 +117,67 @@ function getUserById(req, res) {
     });
 }
 
+function uploadImage(req, res) {
+    console.log(req.user);
+    var userId = req.params.id;
+    if (req.files) {
+
+        var file_path = req.files.image.path;
+        var file_split = file_path.split('\/');
+        var file_name = file_split[2];
+        var ext_split = file_name.split(".");
+
+        var file_ext = ext_split[1];
+        console.log(file_path);
+
+        if (userId != req.user.sub) {
+            return removeFilesOfUploads(file_path, 'No tienes permisos para subir imagen a otra cuenta', res);
+        }
+        if (req.user.image != null || req.user.image != undefined || req.user.image != '') {
+            fs.unlink('uploads/users/' + req.user.image, (err) => {
+                if (err) console.log(err);
+            });
+        }
+
+        if (file_ext == 'png' || file_ext == 'jpg' || file_ext == 'jpeg' || file_ext == 'gif') {
+            im.resize({
+                srcPath: file_path,
+                dstPath: file_path,
+                width: 350
+            }, function(err, stdout, stderr) {
+                if (err) removeFilesOfUploads(file_path, 'Error al guardar imagen', res);
+            });
+            User.findByIdAndUpdate(userId, { image: file_name }, { new: true }, (err, userUpdated) => {
+                if (err) return res.status(200).send({ message: 'No se pudo subir imagen', success: false });
+                if (!userUpdated) return res.status(200).send({ message: 'No se pudo subir imagen', success: false });
+                return res.status(200).send({ user: userUpdated });
+            });
+        } else {
+            return removeFilesOfUploads(file_path, 'Extension del archivo no valida', res);
+        }
+    }
+}
+
+function removeFilesOfUploads(file_path, message, res) {
+    fs.unlink(file_path, (err) => {
+        if (err) return res.status(200).send({ message: message, success: false });
+        return res.status(200).send({ message: message, success: false });
+    });
+}
+
+function getProfileImage(req, res) {
+    var image_file = req.params.imageFile;
+    var path_file = './uploads/users/' + image_file;
+    console.log(image_file);
+    fs.exists(path_file, (exists) => {
+        if (exists) {
+            return res.sendFile(path.resolve(path_file));
+        } else {
+            return res.status(200).send({ message: 'No existe la imagen', success: false });
+        }
+    })
+}
+
 
 module.exports = {
     home,
@@ -120,6 +185,7 @@ module.exports = {
     newUser,
     loginUser,
     getAllUsers,
-    getUserById
-
+    getUserById,
+    uploadImage,
+    getProfileImage
 }
