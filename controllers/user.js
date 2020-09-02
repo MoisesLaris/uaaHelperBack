@@ -6,6 +6,9 @@ var jwt = require('../services/jwt');
 var fs = require('fs');
 var path = require('path');
 var im = require('imagemagick');
+var secret = 'aplicacion_para_la_tesis_de_la_uaa_jeje';
+var jwtLibrary = require('jwt-simple');
+var moment = require('moment');
 
 function home(req, res) {
     res.status(200).send({
@@ -178,6 +181,31 @@ function getProfileImage(req, res) {
     })
 }
 
+function verifySession(req, res) {
+    if (req.body.token) {
+        var token = req.body.token;
+
+        try {
+            var payload = jwtLibrary.decode(token, secret);
+            if (payload.exp <= moment().unix()) {
+                return res.status(200).send({
+                    message: 'El token ha expirado',
+                    success: false
+                });
+            }
+        } catch (ex) {
+            return res.status(200).send({
+                message: 'El token no es valido',
+                success: false
+            });
+        }
+
+        return res.status(200).send(payload);
+    } else {
+        return res.status(200).send({ message: 'No se ha enviado token', success: false });
+    }
+}
+
 
 module.exports = {
     home,
@@ -187,5 +215,6 @@ module.exports = {
     getAllUsers,
     getUserById,
     uploadImage,
-    getProfileImage
+    getProfileImage,
+    verifySession
 }
