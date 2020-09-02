@@ -153,7 +153,7 @@ function uploadImage(req, res) {
             User.findByIdAndUpdate(userId, { image: file_name }, { new: true }, (err, userUpdated) => {
                 if (err) return res.status(200).send({ message: 'No se pudo subir imagen', success: false });
                 if (!userUpdated) return res.status(200).send({ message: 'No se pudo subir imagen', success: false });
-                return res.status(200).send({ user: userUpdated, token: jwt.createToken(userUpdated), success: true });
+                return res.status(200).send({ user: userUpdated, token: jwt.createToken(userUpdated), success: true, message: 'Imagen guardada con exito' });
             });
         } else {
             return removeFilesOfUploads(file_path, 'Extension del archivo no valida', res);
