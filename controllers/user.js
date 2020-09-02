@@ -128,7 +128,7 @@ function uploadImage(req, res) {
         var file_path = req.files.image.path;
         var file_split = file_path.split('\/');
         var file_name = file_split[2];
-        var ext_split = file_name.split(".");
+        var ext_split = file_name.split("\.");
 
         var file_ext = ext_split[1];
         console.log(file_path);
@@ -153,7 +153,7 @@ function uploadImage(req, res) {
             User.findByIdAndUpdate(userId, { image: file_name }, { new: true }, (err, userUpdated) => {
                 if (err) return res.status(200).send({ message: 'No se pudo subir imagen', success: false });
                 if (!userUpdated) return res.status(200).send({ message: 'No se pudo subir imagen', success: false });
-                return res.status(200).send({ user: userUpdated });
+                return res.status(200).send({ user: userUpdated, token: jwt.createToken(userUpdated), success: true });
             });
         } else {
             return removeFilesOfUploads(file_path, 'Extension del archivo no valida', res);
