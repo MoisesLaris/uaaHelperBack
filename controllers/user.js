@@ -74,6 +74,7 @@ function loginUser(req, res) {
         if (err) return res.status(500).send({ message: 'Error al hacer login' });
 
         if (user) {
+            user.password = undefined;
             bcrypt.compare(password, user.password, (err, check) => {
                 if (!check) {
                     return res.status(200).send({ message: 'Error en email y/o password' });
@@ -81,7 +82,8 @@ function loginUser(req, res) {
                     //Exito !!
                     user.password = undefined;
                     return res.status(200).send({
-                        token: jwt.createToken(user)
+                        token: jwt.createToken(user),
+                        user: user
                     });
                 }
 
