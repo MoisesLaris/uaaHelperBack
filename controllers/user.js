@@ -66,7 +66,7 @@ function newUser(req, res) {
 
 function loginUser(req, res) {
     var params = req.body;
-
+    console.log(params);
     var email = params.email;
     var password = params.password;
 
@@ -74,8 +74,8 @@ function loginUser(req, res) {
         if (err) return res.status(500).send({ message: 'Error al hacer login' });
 
         if (user) {
-            user.password = undefined;
             bcrypt.compare(password, user.password, (err, check) => {
+                console.log(check);
                 if (!check) {
                     return res.status(200).send({ message: 'Error en email y/o password' });
                 } else {
