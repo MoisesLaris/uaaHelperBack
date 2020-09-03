@@ -179,7 +179,7 @@ function getProfileImage(req, res) {
         if (exists) {
             return res.sendFile(path.resolve(path_file));
         } else {
-            return res.status(200).send({ message: 'No existe la imagen', success: false });
+            return res.sendFile(path.resolve('./uploads/notfound.jpg'));
         }
     })
 }
