@@ -33,6 +33,11 @@ function newUser(req, res) {
         user.email = params.email.toLowerCase();
         user.isAdmin = false;
         user.image = null;
+        if (req.user.isAdmin) {
+            if (params.isAdmin) {
+                user.isAdmin = params.isAdmin;
+            }
+        }
 
         User.findOne({ email: user.email.toLowerCase() }).exec((err, users) => {
             if (err) return res.status(500).send({ message: 'Error en la peticion' });
