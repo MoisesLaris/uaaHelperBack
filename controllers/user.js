@@ -33,11 +33,48 @@ function newUser(req, res) {
         user.email = params.email.toLowerCase();
         user.isAdmin = false;
         user.image = null;
-        if (req.user.isAdmin) {
-            if (params.isAdmin) {
-                user.isAdmin = params.isAdmin;
+
+        User.findOne({ email: user.email.toLowerCase() }).exec((err, users) => {
+            if (err) return res.status(500).send({ message: 'Error en la peticion' });
+
+            if (users) {
+                return res.status(200).send({
+                    success: false,
+                    message: 'Este usuario ya existe'
+                });
+            } else {
+                bcrypt.hash(params.password, null, null, (err, hash) => {
+                    user.password = hash;
+                    user.save((err, userStored) => {
+                        if (err) return err.status(500).send({ message: 'Error al guardar el usuario' });
+                        if (userStored) {
+                            res.status(200).send({ success: true, message: 'Usuario registrado' });
+                        } else {
+                            res.status(200).send({ success: true, message: 'No se ha registrado el usuario' });
+                        }
+                    })
+                });
             }
-        }
+        });
+    } else {
+        res.status(200).send({
+            success: false,
+            message: 'Algunos campos están incompletos'
+        })
+    }
+}
+
+function newUserAdmin(req, res) {
+    var params = req.body;
+    var user = new User();
+    console.log(params);
+    if (params.nombre && params.apellidos && params.email && params.password && params.isAdmin) {
+        user.nombre = params.nombre;
+        user.apellidos = params.apellidos;
+        user.email = params.email.toLowerCase();
+        user.image = null;
+        user.isAdmin = params.isAdmin;
+        console.log('usuario a guardar: ', user);
 
         User.findOne({ email: user.email.toLowerCase() }).exec((err, users) => {
             if (err) return res.status(500).send({ message: 'Error en la peticion' });
@@ -219,6 +256,7 @@ module.exports = {
     home,
     pruebas,
     newUser,
+    newUserAdmin,
     loginUser,
     getAllUsers,
     getUserById,

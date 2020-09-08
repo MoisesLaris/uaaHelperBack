@@ -12,6 +12,7 @@ var md_upload = multipart({ uploadDir: './uploads/users' });
 api.get('/home', UserController.home);
 api.post('/pruebas', md_auth.ensureAuth, UserController.pruebas);
 api.post('/usuario/newUser', UserController.newUser);
+api.post('/usuario/newUserAdmin', md_auth.ensureAuth, UserController.newUserAdmin);
 api.post('/usuario/editUser', UserController.newUser); //Funcion para editar usuario
 api.post('/usuario/login', UserController.loginUser);
 api.post('/usuario/uploadImage/:id', [md_auth.ensureAuth, md_upload], UserController.uploadImage);
