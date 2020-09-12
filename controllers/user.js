@@ -113,7 +113,7 @@ function editUser(req, res) {
     if (update.email) delete update.email;
 
     console.log(params);
-    if (params.id && params.nombre && params.apellidos && params.isAdmin) {
+    if (params.id && params.nombre && params.apellidos && (params.isAdmin != null)) {
         User.findByIdAndUpdate(params.id, update, (err, userUpdated) => {
             if (err) return res.status(200).send({ message: 'Error al editar usuario', success: false });
             if (userUpdated) {
