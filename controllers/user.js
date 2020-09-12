@@ -106,6 +106,29 @@ function newUserAdmin(req, res) {
     }
 }
 
+function editUser(req, res) {
+    var params = req.body;
+    var update = req.body;
+    if (update.password) delete update.password;
+    if (update.email) delete update.email;
+
+    console.log(params);
+    if (params.id && params.nombre && params.apellidos && params.isAdmin) {
+        User.findByIdAndUpdate(params.id, update, (err, userUpdated) => {
+            if (err) return res.status(200).send({ message: 'Error al editar usuario', success: false });
+            if (userUpdated) {
+                return res.status(200).send({ message: 'Usuario editado con exito', success: true });
+            }
+            return res.status(200).send({ message: 'Error al editar usuario', success: false });
+        });
+    } else {
+        return res.status(200).send({
+            success: false,
+            message: 'Algunos campos están incompletos'
+        })
+    }
+}
+
 function loginUser(req, res) {
     var params = req.body;
     console.log(params);
@@ -262,5 +285,6 @@ module.exports = {
     getUserById,
     uploadImage,
     getProfileImage,
-    verifySession
+    verifySession,
+    editUser
 }
