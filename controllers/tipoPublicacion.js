@@ -6,8 +6,9 @@ var Publicacion = require('../models/publicacion');
 function newTipo(req, res) {
     var params = req.body;
     var tipo = new Tipo();
-    if (params.nombre) {
+    if (params.nombre && params.descripcion) {
         tipo.nombre = params.nombre.toLowerCase();
+        tipo.descripcion = params.descripcion;
 
         Tipo.findOne({ nombre: tipo.nombre }).exec((err, tipos) => {
             if (err) return res.status(500).send({ message: 'Error en la peticion' });
@@ -32,6 +33,7 @@ function newTipo(req, res) {
 function editTipo(req, res) {
     var params = req.body;
     params.nombre = params.nombre.toLowerCase();
+    params.descripcion = params.descripcion;
 
     Tipo.findByIdAndUpdate(params.id, params, { new: true }, (err, tipoEdited) => {
         if (err) return res.status(200).send({ message: 'Error en la peticion', success: false });
