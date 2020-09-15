@@ -3,23 +3,25 @@
 var Tipo = require('../models/tipoPublicacion');
 var Publicacion = require('../models/publicacion');
 
-async function newPublication(req, res) {
+function newPublication(req, res) {
     var params = req.body;
-    if (params.titulo && params.mensaje) {
+    if (params.titulo && params.mensaje && params.isQuestion) {
         var publicacion = new Publicacion();
         publicacion.titulo = params.titulo;
         publicacion.mensaje = params.mensaje;
-
+        publicacion.isQuestion = params.isQuestion;
 
         publicacion.idUser = req.user.sub;
         if (req.user.isAdmin) {
-            if (!params.tipoPublicacion) return res.status(200).send({ message: 'Se debe mandar el tipo publicacion', success: false });
-            if (params.tipoPublicacion.id) return res.status(200).send({ message: 'Error al asignar publicacion a tipo publicacion', success: false });
-            publicacion.tipoPublicacion = params.tipoPublicacion.id;
+            if (params.isQuestion) {
+                publicacion.tipoPublicacion = null;
+            } else {
+                if (!params.tipoPublicacion) return res.status(200).send({ message: 'Se debe mandar el tipo publicacion', success: false });
+                if (params.tipoPublicacion.id) return res.status(200).send({ message: 'Error al asignar publicacion a tipo publicacion', success: false });
+                publicacion.tipoPublicacion = params.tipoPublicacion.id;
+            }
         } else {
-            //Se guarda el tipo como "pregunta"
-            var tipoPregunta = await getTipoPregunta();
-            publicacion.tipoPublicacion = tipoPregunta._id;
+            publicacion.tipoPublicacion = null;
         }
         publicacion.save((err, publicacionStored) => {
             console.log(err);
@@ -32,13 +34,8 @@ async function newPublication(req, res) {
     }
 }
 
-async function getTipoPregunta() {
-    var preguntaResp = await Tipo.findOne({ nombre: 'pregunta' }, (err, pregunta) => {
-        if (err) return handleError(err);
-        return pregunta;
-    });
-    return preguntaResp;
-}
+
+
 
 module.exports = {
     newPublication

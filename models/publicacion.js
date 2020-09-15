@@ -14,6 +14,7 @@ var PublicacionSchema = Schema({
     tipoPublicacion: { type: Schema.ObjectId, ref: 'Tipo' },
     users: [{ type: Schema.ObjectId, ref: 'User' }],
     comentarios: [Comentario.schema],
+    isQuestion: { type: Boolean },
     image: { type: String }
 });
 

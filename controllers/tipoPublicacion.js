@@ -34,7 +34,6 @@ function editTipo(req, res) {
     var params = req.body;
     params.nombre = params.nombre.toLowerCase();
     params.descripcion = params.descripcion;
-
     Tipo.findByIdAndUpdate(params.id, params, { new: true }, (err, tipoEdited) => {
         if (err) return res.status(200).send({ message: 'Error en la peticion', success: false });
 
