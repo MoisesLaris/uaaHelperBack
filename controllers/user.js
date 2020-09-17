@@ -204,11 +204,11 @@ function uploadImage(req, res) {
         if (userId != req.user.sub) {
             return removeFilesOfUploads(file_path, 'No tienes permisos para subir imagen a otra cuenta', res);
         }
-        if (req.user.image != null || req.user.image != undefined || req.user.image != '') {
-            fs.unlink('uploads/users/' + req.user.image, (err) => {
-                if (err) console.log(err);
-            });
-        }
+        // if (req.user.image != null || req.user.image != undefined || req.user.image != '') {
+        //     fs.unlink('uploads/users/' + req.user.image, (err) => {
+        //         if (err) console.log(err);
+        //     });
+        // }
 
         if (file_ext == 'png' || file_ext == 'jpg' || file_ext == 'jpeg' || file_ext == 'gif') {
             im.resize({
