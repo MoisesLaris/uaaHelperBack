@@ -17,7 +17,7 @@ function newPublication(req, res) {
                 publicacion.tipoPublicacion = null;
             } else {
                 if (!params.tipoPublicacion) return res.status(200).send({ message: 'Se debe mandar el tipo publicacion', success: false });
-                if (params.tipoPublicacion.id) return res.status(200).send({ message: 'Error al asignar publicacion a tipo publicacion', success: false });
+                if (!params.tipoPublicacion.id) return res.status(200).send({ message: 'Error al asignar publicacion a tipo publicacion', success: false });
                 publicacion.tipoPublicacion = params.tipoPublicacion.id;
             }
         } else {
@@ -30,7 +30,7 @@ function newPublication(req, res) {
             return res.status(200).send({ message: 'Publicación guardada exitosamente', success: true });
         });
     } else {
-        return res.status(200).send({ mensaje: 'Todos los campos son requeridos', success: false });
+        return res.status(200).send({ message: 'Todos los campos son requeridos', success: false });
     }
 }
 
