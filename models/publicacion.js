@@ -15,6 +15,7 @@ var PublicacionSchema = Schema({
     users: [{ type: Schema.ObjectId, ref: 'User' }],
     comentarios: [Comentario.schema],
     isQuestion: { type: Boolean },
+    fecha: { type: Date },
     image: { type: String }
 });
 

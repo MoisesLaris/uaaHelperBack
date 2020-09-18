@@ -68,7 +68,7 @@ function newUserAdmin(req, res) {
     var params = req.body;
     var user = new User();
     console.log(params);
-    if (params.nombre && params.apellidos && params.email && params.password && params.isAdmin) {
+    if (params.nombre && params.apellidos && params.email && params.password && 'isAdmin' in params) {
         user.nombre = params.nombre;
         user.apellidos = params.apellidos;
         user.email = params.email.toLowerCase();
@@ -113,7 +113,7 @@ function editUser(req, res) {
     if (update.email) delete update.email;
 
     console.log(params);
-    if (params.id && params.nombre && params.apellidos && (params.isAdmin != null)) {
+    if (params.id && params.nombre && params.apellidos && 'isAdmin' in params) {
         User.findByIdAndUpdate(params.id, update, (err, userUpdated) => {
             if (err) return res.status(200).send({ message: 'Error al editar usuario', success: false });
             if (userUpdated) {

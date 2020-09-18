@@ -19,6 +19,7 @@
         "jwt-simple": "^0.5.6",
         "moment": "^2.27.0",
         "mongoose": "^5.9.27",
+        "mongoose-pagination": "^1.0.0",
         "resize-optimize-images": "^1.1.2"
     },
     "devDependencies": {
