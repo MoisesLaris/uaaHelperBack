@@ -16,7 +16,7 @@ function newPublication(req, res) {
 
         publicacion.idUser = req.user.sub;
         if (req.user.isAdmin) {
-            if (!params.isQuestion) {
+            if (params.isQuestion) {
                 publicacion.tipoPublicacion = null;
             } else {
                 if (!params.tipoPublicacion) return res.status(200).send({ message: 'Se debe mandar el tipo publicacion', success: false });
@@ -43,7 +43,7 @@ function getQuestions(req, res) {
     if (req.params.page) {
         page = req.params.page;
     }
-    var itemsPerPage = 10;
+    var itemsPerPage = 12;
 
     Publicacion.find({ isQuestion: true }).sort('_id').paginate(page, itemsPerPage, (err, questions, total) => {
         if (err) return res.status(500).send({ success: false, message: 'Error al traer preguntas' });
