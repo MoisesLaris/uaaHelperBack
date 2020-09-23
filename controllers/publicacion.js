@@ -12,6 +12,7 @@ function newPublication(req, res) {
         publicacion.titulo = params.titulo;
         publicacion.mensaje = params.mensaje;
         publicacion.isQuestion = params.isQuestion;
+        publicacion.fecha = new Date();
 
         publicacion.idUser = req.user.sub;
         if (req.user.isAdmin) {
@@ -42,9 +43,9 @@ function getQuestions(req, res) {
     if (req.params.page) {
         page = req.params.page;
     }
-    var itemsPerPage = 5;
+    var itemsPerPage = 12;
 
-    Publicacion.find().sort('_id').paginate(page, itemsPerPage, (err, questions, total) => {
+    Publicacion.find({ isQuestion: true }).sort('_id').paginate(page, itemsPerPage, (err, questions, total) => {
         if (err) return res.status(500).send({ success: false, message: 'Error al traer preguntas' });
         if (!questions) res.status(500).send({ success: false, message: 'No hay preguntas' });
         return res.status(200).send({
