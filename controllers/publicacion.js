@@ -43,7 +43,7 @@ function getQuestions(req, res) {
     if (req.params.page) {
         page = req.params.page;
     }
-    var itemsPerPage = 12;
+    var itemsPerPage = 10;
 
     Publicacion.find({ isQuestion: true }).sort('_id').paginate(page, itemsPerPage, (err, questions, total) => {
         if (err) return res.status(500).send({ success: false, message: 'Error al traer preguntas' });
