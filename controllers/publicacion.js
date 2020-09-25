@@ -56,10 +56,38 @@ function getQuestions(req, res) {
     });
 }
 
+function likePost(req, res) {
+    var params = req.body;
+
+    var conditionsIfNot = {
+        _id: params.id,
+        'users': { $ne: req.user.sub }
+    };
+    var updateIfNot = {
+        $addToSet: { users: req.user.sub }
+    }
+    Publicacion.findOneAndUpdate(conditionsIfNot, updateIfNot, { new: true }, function(err, publicacionNot) {
+        if (err) return res.status(500).send('error');
+        if (publicacionNot) return res.status(200).send({ message: 'like removed', success: true, id: true });
+        else {
+            Publicacion.findOneAndUpdate({ _id: params.id, 'users': req.user.sub }, { $pull: { users: req.user.sub } }, { new: true }, (err, publicacionYes) => {
+                if (err) return res.status(500).send('error');
+                if (publicacionYes) return res.status(200).send({ message: 'like removed', success: true, id: false });
+                else {
+                    return res.status(500).send('error');
+                }
+            });
+        }
+
+    });
+
+}
+
 
 
 
 module.exports = {
     newPublication,
-    getQuestions
+    getQuestions,
+    likePost
 }
