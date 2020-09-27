@@ -43,9 +43,45 @@ function getQuestions(req, res) {
     if (req.params.page) {
         page = req.params.page;
     }
-    var itemsPerPage = 12;
+    var itemsPerPage = 15;
 
     Publicacion.find({ isQuestion: true }).sort('_id').populate('idUser').paginate(page, itemsPerPage, (err, questions, total) => {
+        if (err) return res.status(500).send({ success: false, message: 'Error al traer preguntas' });
+        if (!questions) res.status(500).send({ success: false, message: 'No hay preguntas' });
+        return res.status(200).send({
+            questions,
+            total,
+            pages: Math.ceil(total / itemsPerPage)
+        });
+    });
+}
+
+function getFavoriteQuestions(req, res) {
+    var page = 1;
+    if (req.params.page) {
+        page = req.params.page;
+    }
+    var itemsPerPage = 15;
+
+    Publicacion.find({ isQuestion: true, users: req.user.sub }).sort('_id').populate('idUser').paginate(page, itemsPerPage, (err, questions, total) => {
+        if (err) return res.status(500).send({ success: false, message: 'Error al traer preguntas' });
+        if (!questions) res.status(500).send({ success: false, message: 'No hay preguntas' });
+        return res.status(200).send({
+            questions,
+            total,
+            pages: Math.ceil(total / itemsPerPage)
+        });
+    });
+}
+
+function getMyQuestions(req, res) {
+    var page = 1;
+    if (req.params.page) {
+        page = req.params.page;
+    }
+    var itemsPerPage = 15;
+
+    Publicacion.find({ isQuestion: true, idUser: req.user.sub }).sort('_id').populate('idUser').paginate(page, itemsPerPage, (err, questions, total) => {
         if (err) return res.status(500).send({ success: false, message: 'Error al traer preguntas' });
         if (!questions) res.status(500).send({ success: false, message: 'No hay preguntas' });
         return res.status(200).send({
@@ -89,5 +125,7 @@ function likePost(req, res) {
 module.exports = {
     newPublication,
     getQuestions,
-    likePost
+    likePost,
+    getFavoriteQuestions,
+    getMyQuestions
 }
