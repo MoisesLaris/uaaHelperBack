@@ -3,7 +3,7 @@
 var Comentarios = require('../models/comentarios');
 var User = require('../models/user');
 var mongoosePaginate = require('mongoose-pagination');
-const { param } = require('../routes/publicacion');
+
 
 function getComments(req, res) {
     var page = 1;
@@ -37,9 +37,10 @@ function postComment(req, res) {
             console.log(err);
             if (err) return res.status(200).send({ success: false, message: 'Error al guardar comentario' });
             if (!comentarioStored) return res.status(200).send({ message: 'No se ha guardado el comentario', success: false });
-            Comment.populate(comentarioStored, { path: 'idUser' }, (err, comentario) => {
+            Comentarios.populate(comentarioStored, { path: 'idUser' }, (err, comentario) => {
                 if (err) return res.status(200).send({ success: false, message: 'Error al guardar comentario' });
                 if (!comentario) return res.status(200).send({ message: 'No se ha guardado el comentario', success: false });
+                comentario.idUser.password = undefined;
                 return res.status(200).send({ message: 'Comentario guardado exitosamente', success: true, id: comentario });
             })
         });
