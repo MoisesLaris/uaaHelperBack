@@ -15,6 +15,7 @@ app.use(bodyParser.urlencoded({ // to support URL-encoded bodies
 var user_routes = require('./routes/user');
 var tipo_routes = require('./routes/tipoPublicacion');
 var publicacion_routes = require('./routes/publicacion');
+var comentario_routes = require('./routes/comentarios');
 
 //middlewares
 
@@ -27,6 +28,7 @@ app.use(bodyParser.json());
 app.use('/api', user_routes);
 app.use('/api', tipo_routes);
 app.use('/api', publicacion_routes);
+app.use('/api', comentario_routes);
 
 //Exportar
 
