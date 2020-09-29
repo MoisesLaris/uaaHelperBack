@@ -35,10 +35,11 @@ function postComment(req, res) {
 
         comentario.save((err, comentarioStored) => {
             console.log(err);
-            if (err) return res.status(200).send({ success: false, message: 'Error al guardar publicacion' });
-            if (!comentarioStored) return res.status(200).send({ message: 'No se ha guardado la publicación', success: false });
+            if (err) return res.status(200).send({ success: false, message: 'Error al guardar comentario' });
+            if (!comentarioStored) return res.status(200).send({ message: 'No se ha guardado el comentario', success: false });
             Comment.populate(comentarioStored, { path: 'idUser' }, (err, comentario) => {
-                if (err) return res.status(200).send({ success: false, message: 'Error al guardar publicacion' });
+                if (err) return res.status(200).send({ success: false, message: 'Error al guardar comentario' });
+                if (!comentario) return res.status(200).send({ message: 'No se ha guardado el comentario', success: false });
                 return res.status(200).send({ message: 'Comentario guardado exitosamente', success: true, id: comentario });
             })
         });
