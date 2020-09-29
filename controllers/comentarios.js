@@ -1,6 +1,7 @@
 'use strict'
 
 var Comentarios = require('../models/comentarios');
+var User = require('../models/user');
 var mongoosePaginate = require('mongoose-pagination');
 const { param } = require('../routes/publicacion');
 
@@ -36,7 +37,10 @@ function postComment(req, res) {
             console.log(err);
             if (err) return res.status(200).send({ success: false, message: 'Error al guardar publicacion' });
             if (!comentarioStored) return res.status(200).send({ message: 'No se ha guardado la publicación', success: false });
-            return res.status(200).send({ message: 'Comentario guardado exitosamente', success: true, id: comentarioStored });
+            Comment.populate(comentarioStored, { path: 'idUser' }, (err, comentario) => {
+                if (err) return res.status(200).send({ success: false, message: 'Error al guardar publicacion' });
+                return res.status(200).send({ message: 'Comentario guardado exitosamente', success: true, id: comentario });
+            })
         });
     } else {
         return res.status(200).send({ message: 'Todos los campos son requeridos', success: false });
