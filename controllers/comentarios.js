@@ -10,7 +10,7 @@ function getComments(req, res) {
     if (req.params.page) {
         page = req.params.page;
     }
-    var itemsPerPage = 5;
+    var itemsPerPage = 15;
 
     Comentarios.find({ idPublicacion: req.params.idPost }).sort('_id').populate('idUser').paginate(page, itemsPerPage, (err, comments, total) => {
         if (err) return res.status(500).send({ success: false, message: 'Error al traer preguntas' });
