@@ -3,6 +3,10 @@
 var Tipo = require('../models/tipoPublicacion');
 var Publicacion = require('../models/publicacion');
 var mongoosePaginate = require('mongoose-pagination');
+var fs = require('fs');
+var path = require('path');
+
+
 
 function newPublication(req, res) {
     var params = req.body;
@@ -20,8 +24,7 @@ function newPublication(req, res) {
                 publicacion.tipoPublicacion = null;
             } else {
                 if (!params.tipoPublicacion) return res.status(200).send({ message: 'Se debe mandar el tipo publicacion', success: false });
-                if (!params.tipoPublicacion.id) return res.status(200).send({ message: 'Error al asignar publicacion a tipo publicacion', success: false });
-                publicacion.tipoPublicacion = params.tipoPublicacion.id;
+                publicacion.tipoPublicacion = params.tipoPublicacion;
             }
         } else {
             publicacion.tipoPublicacion = null;
@@ -55,6 +58,8 @@ function getQuestions(req, res) {
         });
     });
 }
+
+
 
 function getFavoriteQuestions(req, res) {
     var page = 1;
@@ -92,6 +97,44 @@ function getMyQuestions(req, res) {
     });
 }
 
+function getPosts(req, res) {
+    var page = 1;
+    if (req.params.page) {
+        page = req.params.page;
+    }
+    var itemsPerPage = 15;
+
+    Publicacion.find({ isQuestion: false }).sort('_id').populate([{ path: 'idUser' }, { path: 'tipoPublicacion' }]).paginate(page, itemsPerPage, (err, questions, total) => {
+        if (err) return res.status(500).send({ success: false, message: 'Error al traer publicaciones' });
+        if (!questions) res.status(500).send({ success: false, message: 'No hay publicaciones' });
+        console.log(questions);
+
+        return res.status(200).send({
+            questions,
+            total,
+            pages: Math.ceil(total / itemsPerPage)
+        });
+    });
+}
+
+function editarPost(req, res) {
+    var params = req.body;
+    var objUpdate = {
+        'titulo': params.titulo,
+        'mensaje': params.mensaje,
+        'tipoPublicacion': params.tipoPublicacion
+    }
+    Publicacion.findByIdAndUpdate(params.id, objUpdate, { new: true }, (err, tipoEdited) => {
+        if (err) return res.status(200).send({ message: 'Error en la peticion', success: false });
+
+        if (tipoEdited) {
+            return res.status(200).send({ message: 'Publicación editada correctamente', success: true });
+        } else {
+            return res.status(200).send({ message: 'No se ha editado publicación', success: false });
+        }
+    });
+}
+
 function likePost(req, res) {
     var params = req.body;
 
@@ -119,6 +162,46 @@ function likePost(req, res) {
 
 }
 
+function uploadImage(req, res) {
+
+    if (req.files) {
+        console.log(req.files);
+        var file_path = req.files.image.path;
+        var file_split = file_path.split('\/');
+        var file_name = file_split[2];
+        var ext_split = file_name.split("\.");
+
+        var file_ext = ext_split[1];
+        console.log(file_path);
+
+        if (file_ext == 'png' || file_ext == 'jpg' || file_ext == 'jpeg' || file_ext == 'gif') {
+            return res.status(200).send({ success: true, message: 'Imagen guardada con exito', id: file_name });
+        } else {
+            return removeFilesOfUploads(file_path, 'Extension del archivo no valida', res);
+        }
+    }
+}
+
+function getPostImage(req, res) {
+    var image_file = req.params.imageFile;
+    var path_file = './uploads/post/' + image_file;
+    console.log(image_file);
+    fs.exists(path_file, (exists) => {
+        if (exists) {
+            return res.sendFile(path.resolve(path_file));
+        } else {
+            return res.sendFile(path.resolve('./uploads/notfound.jpg'));
+        }
+    })
+}
+
+function removeFilesOfUploads(file_path, message, res) {
+    fs.unlink(file_path, (err) => {
+        if (err) return res.status(200).send({ message: message, success: false });
+        return res.status(200).send({ message: message, success: false });
+    });
+}
+
 
 
 
@@ -127,5 +210,9 @@ module.exports = {
     getQuestions,
     likePost,
     getFavoriteQuestions,
-    getMyQuestions
+    getMyQuestions,
+    uploadImage,
+    getPostImage,
+    getPosts,
+    editarPost
 }
