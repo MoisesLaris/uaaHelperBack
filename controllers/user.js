@@ -214,7 +214,11 @@ function uploadImage(req, res) {
             im.resize({
                 srcPath: file_path,
                 dstPath: file_path,
-                width: 350
+                width: 350,
+                height: "350^",
+                customArgs: [
+                    "-gravity", "center", "-extent", "350x350"
+                ]
             }, function(err, stdout, stderr) {
                 if (err) removeFilesOfUploads(file_path, 'Error al guardar imagen', res);
             });

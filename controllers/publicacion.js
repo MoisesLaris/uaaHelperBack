@@ -5,6 +5,7 @@ var Publicacion = require('../models/publicacion');
 var mongoosePaginate = require('mongoose-pagination');
 var fs = require('fs');
 var path = require('path');
+var im = require('imagemagick');
 
 
 
@@ -104,14 +105,14 @@ function getPosts(req, res) {
     }
     var itemsPerPage = 15;
 
-    Publicacion.find({ isQuestion: false }).sort('_id').populate([{ path: 'idUser' }, { path: 'tipoPublicacion' }]).paginate(page, itemsPerPage, (err, questions, total) => {
+    Publicacion.find({ isQuestion: false }).sort({ fecha: 'descending' }).populate([{ path: 'idUser' }, { path: 'tipoPublicacion' }]).paginate(page, itemsPerPage, (err, questions, total) => {
         if (err) return res.status(500).send({ success: false, message: 'Error al traer publicaciones' });
         if (!questions) res.status(500).send({ success: false, message: 'No hay publicaciones' });
         console.log(questions);
 
         return res.status(200).send({
-            questions,
             total,
+            questions,
             pages: Math.ceil(total / itemsPerPage)
         });
     });
@@ -186,6 +187,14 @@ function uploadImage(req, res) {
         console.log(file_path);
 
         if (file_ext == 'png' || file_ext == 'jpg' || file_ext == 'jpeg' || file_ext == 'gif') {
+            im.resize({
+                srcPath: file_path,
+                dstPath: file_path,
+                quality: 0.6,
+                width: 400
+            }, function(err, stdout, stderr) {
+                if (err) removeFilesOfUploads(file_path, 'Error al guardar imagen', res);
+            });
             return res.status(200).send({ success: true, message: 'Imagen guardada con exito', id: file_name });
         } else {
             return removeFilesOfUploads(file_path, 'Extension del archivo no valida', res);
