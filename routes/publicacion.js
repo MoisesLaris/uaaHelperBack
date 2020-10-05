@@ -16,6 +16,8 @@ api.post('/publicacion/uploadImage', [md_auth.ensureAuth, md_upload], publicacio
 
 api.post('/publicacion/newPublicacion', md_auth.ensureAuth, publicacionController.newPublication);
 api.post('/publicacion/editarPublicacion', md_auth.ensureAuth, publicacionController.editarPost);
+api.post('/publicacion/eliminarPublicacion', md_auth.ensureAuth, publicacionController.deletePost);
+
 api.post('/publicacion/likePost', md_auth.ensureAuth, publicacionController.likePost);
 
 api.get('/publicacion/preguntas/:page?', md_auth.ensureAuth, publicacionController.getQuestions);

@@ -135,6 +135,17 @@ function editarPost(req, res) {
     });
 }
 
+function deletePost(req, res) {
+    var params = req.body;
+    var publicacionId = params.id;
+
+    Publicacion.deleteOne({ _id: publicacionId }, err => {
+        if (err) return res.status(200).send({ message: 'Error al eliminar tipo', success: false });
+
+        return res.status(200).send({ message: 'Publicación eliminada', success: true });
+    })
+}
+
 function likePost(req, res) {
     var params = req.body;
 
@@ -214,5 +225,6 @@ module.exports = {
     uploadImage,
     getPostImage,
     getPosts,
-    editarPost
+    editarPost,
+    deletePost
 }
