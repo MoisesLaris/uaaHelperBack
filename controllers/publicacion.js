@@ -158,6 +158,18 @@ function getPostFavorites(req, res) {
     });
 }
 
+function getSeachPost(req, res) {
+    var name = '';
+    if (req.params.name) {
+        name = req.params.name;
+    }
+    Publicacion.find({ isQuestion: false, titulo: name }, (err, publicaciones) => {
+        if (err) return res.status(200).send({ message: 'Error al encontrar resultados', success: false });
+        if (!res) return res.status(200).send({ message: 'Error al encontrar resultados', success: false });
+        return res.status(200).send({ questions: publicaciones });
+    }).populate([{ path: 'idUser' }, { path: 'tipoPublicacion' }]);
+}
+
 
 function editarPost(req, res) {
     var params = req.body;
@@ -279,5 +291,6 @@ module.exports = {
     getPostAscending,
     getPostFavorites,
     editarPost,
-    deletePost
+    deletePost,
+    getSeachPost
 }
