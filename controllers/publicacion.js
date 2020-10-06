@@ -163,13 +163,24 @@ function getSeachPost(req, res) {
     if (req.params.name) {
         name = req.params.name;
     }
-    Publicacion.find({ isQuestion: false, titulo: name }, (err, publicaciones) => {
+    Publicacion.find({ isQuestion: false, titulo: { "$regex": name, "$options": "i" } }, (err, publicaciones) => {
         if (err) return res.status(200).send({ message: 'Error al encontrar resultados', success: false });
         if (!res) return res.status(200).send({ message: 'Error al encontrar resultados', success: false });
         return res.status(200).send({ questions: publicaciones });
     }).populate([{ path: 'idUser' }, { path: 'tipoPublicacion' }]);
 }
 
+function getSearchQuestion(req, res) {
+    var name = '';
+    if (req.params.name) {
+        name = req.params.name;
+    }
+    Publicacion.find({ isQuestion: true, titulo: { "$regex": name, "$options": "i" } }, (err, publicaciones) => {
+        if (err) return res.status(200).send({ message: 'Error al encontrar resultados', success: false });
+        if (!res) return res.status(200).send({ message: 'Error al encontrar resultados', success: false });
+        return res.status(200).send({ questions: publicaciones });
+    }).populate([{ path: 'idUser' }]);
+}
 
 function editarPost(req, res) {
     var params = req.body;
@@ -292,5 +303,6 @@ module.exports = {
     getPostFavorites,
     editarPost,
     deletePost,
-    getSeachPost
+    getSeachPost,
+    getSearchQuestion
 }
