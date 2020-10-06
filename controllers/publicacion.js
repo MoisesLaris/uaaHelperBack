@@ -118,6 +118,47 @@ function getPosts(req, res) {
     });
 }
 
+function getPostAscending(req, res) {
+    var page = 1;
+    if (req.params.page) {
+        page = req.params.page;
+    }
+    var itemsPerPage = 15;
+
+    Publicacion.find({ isQuestion: false }).sort("_id").populate([{ path: 'idUser' }, { path: 'tipoPublicacion' }]).paginate(page, itemsPerPage, (err, questions, total) => {
+        if (err) return res.status(500).send({ success: false, message: 'Error al traer publicaciones' });
+        if (!questions) res.status(500).send({ success: false, message: 'No hay publicaciones' });
+        console.log(questions);
+
+        return res.status(200).send({
+            total,
+            questions,
+            pages: Math.ceil(total / itemsPerPage)
+        });
+    });
+}
+
+function getPostFavorites(req, res) {
+    var page = 1;
+    if (req.params.page) {
+        page = req.params.page;
+    }
+    var itemsPerPage = 15;
+
+    Publicacion.find({ isQuestion: false }).sort({ "usersLength": -1 }).populate([{ path: 'idUser' }, { path: 'tipoPublicacion' }]).paginate(page, itemsPerPage, (err, questions, total) => {
+        if (err) return res.status(500).send({ success: false, message: 'Error al traer publicaciones' });
+        if (!questions) res.status(500).send({ success: false, message: 'No hay publicaciones' });
+        console.log(questions);
+
+        return res.status(200).send({
+            total,
+            questions,
+            pages: Math.ceil(total / itemsPerPage)
+        });
+    });
+}
+
+
 function editarPost(req, res) {
     var params = req.body;
     var objUpdate = {
@@ -155,13 +196,14 @@ function likePost(req, res) {
         'users': { $ne: req.user.sub }
     };
     var updateIfNot = {
-        $addToSet: { users: req.user.sub }
+        $addToSet: { users: req.user.sub },
+        $inc: { usersLength: 1 }
     }
     Publicacion.findOneAndUpdate(conditionsIfNot, updateIfNot, { new: true }, function(err, publicacionNot) {
         if (err) return res.status(500).send('error');
         if (publicacionNot) return res.status(200).send({ message: 'like removed', success: true, id: true });
         else {
-            Publicacion.findOneAndUpdate({ _id: params.id, 'users': req.user.sub }, { $pull: { users: req.user.sub } }, { new: true }, (err, publicacionYes) => {
+            Publicacion.findOneAndUpdate({ _id: params.id, 'users': req.user.sub }, { $pull: { users: req.user.sub }, $inc: { usersLength: -1 } }, { new: true }, (err, publicacionYes) => {
                 if (err) return res.status(500).send('error');
                 if (publicacionYes) return res.status(200).send({ message: 'like removed', success: true, id: false });
                 else {
@@ -234,6 +276,8 @@ module.exports = {
     uploadImage,
     getPostImage,
     getPosts,
+    getPostAscending,
+    getPostFavorites,
     editarPost,
     deletePost
 }

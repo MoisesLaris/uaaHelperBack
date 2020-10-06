@@ -25,6 +25,8 @@ api.get('/publicacion/preguntasFavoritas/:page?', md_auth.ensureAuth, publicacio
 api.get('/publicacion/misPreguntas/:page?', md_auth.ensureAuth, publicacionController.getMyQuestions);
 
 api.get('/publicacion/publicaciones/:page?', md_auth.ensureAuth, publicacionController.getPosts);
+api.get('/publicacion/publicacionesAcending/:page?', md_auth.ensureAuth, publicacionController.getPostAscending);
+api.get('/publicacion/publicacionesFavoritas/:page?', md_auth.ensureAuth, publicacionController.getPostFavorites);
 
 
 api.get('/publicacion/getImage/:imageFile', publicacionController.getPostImage);

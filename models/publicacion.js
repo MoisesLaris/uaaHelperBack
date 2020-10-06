@@ -13,7 +13,7 @@ var PublicacionSchema = Schema({
     idUser: { type: Schema.ObjectId, ref: 'User' },
     tipoPublicacion: { type: Schema.ObjectId, ref: 'Tipo' },
     users: [{ type: Schema.ObjectId, ref: 'User' }],
-    comentarios: [Comentario.schema],
+    usersLength: { type: Number },
     isQuestion: { type: Boolean },
     fecha: { type: Date },
     image: { type: String }
