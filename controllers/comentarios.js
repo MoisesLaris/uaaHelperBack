@@ -50,7 +50,19 @@ function postComment(req, res) {
 
 }
 
+function deleteComment(req, res) {
+    var params = req.body;
+    var isAdmin = req.user.sub;
+    if (!isAdmin) return res.status(200).send({ message: 'No tienes permisos para eliminar comentario', success: false });
+    Comentarios.findByIdAndDelete(params.id, (err, comentario) => {
+        if (err) return res.status(200).send({ message: 'No tienes permisos para eliminar comentario', success: false });
+        if (!comentario) return res.status(200).send({ message: 'Error al eliminar comentario', success: false });
+        return res.status(200).send({ message: 'Comentario eliminado exitosamente', success: true });
+    });
+}
+
 module.exports = {
     getComments,
-    postComment
+    postComment,
+    deleteComment
 }

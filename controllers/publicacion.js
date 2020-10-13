@@ -1,6 +1,6 @@
 'use strict'
 
-var Tipo = require('../models/tipoPublicacion');
+var Comentarios = require('../models/comentarios');
 var Publicacion = require('../models/publicacion');
 var mongoosePaginate = require('mongoose-pagination');
 var fs = require('fs');
@@ -205,9 +205,11 @@ function deletePost(req, res) {
     var publicacionId = params.id;
 
     Publicacion.deleteOne({ _id: publicacionId }, err => {
-        if (err) return res.status(200).send({ message: 'Error al eliminar tipo', success: false });
-
-        return res.status(200).send({ message: 'Publicación eliminada', success: true });
+        if (err) return res.status(200).send({ message: 'Error al eliminar publicación', success: false });
+        Comentarios.deleteMany({ idPublicacion: publicacionId }, (err => {
+            if (err) return res.status(200).send({ message: 'Error al eliminar publicación y sus comentarios', success: false });
+            return res.status(200).send({ message: 'Publicación eliminada', success: true });
+        }));
     })
 }
 
