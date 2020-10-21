@@ -49,7 +49,7 @@ function getQuestions(req, res) {
     }
     var itemsPerPage = 15;
 
-    Publicacion.find({ isQuestion: true }).sort('_id').populate('idUser').paginate(page, itemsPerPage, (err, questions, total) => {
+    Publicacion.find({ isQuestion: true }).sort({ fecha: 'descending' }).populate('idUser').paginate(page, itemsPerPage, (err, questions, total) => {
         if (err) return res.status(500).send({ success: false, message: 'Error al traer preguntas' });
         if (!questions) res.status(500).send({ success: false, message: 'No hay preguntas' });
         return res.status(200).send({
@@ -69,7 +69,7 @@ function getFavoriteQuestions(req, res) {
     }
     var itemsPerPage = 15;
 
-    Publicacion.find({ isQuestion: true, users: req.user.sub }).sort('_id').populate('idUser').paginate(page, itemsPerPage, (err, questions, total) => {
+    Publicacion.find({ isQuestion: true, users: req.user.sub }).sort({ fecha: 'descending' }).populate('idUser').paginate(page, itemsPerPage, (err, questions, total) => {
         if (err) return res.status(500).send({ success: false, message: 'Error al traer preguntas' });
         if (!questions) res.status(500).send({ success: false, message: 'No hay preguntas' });
         return res.status(200).send({
@@ -87,7 +87,7 @@ function getMyQuestions(req, res) {
     }
     var itemsPerPage = 15;
 
-    Publicacion.find({ isQuestion: true, idUser: req.user.sub }).sort('_id').populate('idUser').paginate(page, itemsPerPage, (err, questions, total) => {
+    Publicacion.find({ isQuestion: true, idUser: req.user.sub }).sort({ fecha: 'descending' }).populate('idUser').paginate(page, itemsPerPage, (err, questions, total) => {
         if (err) return res.status(500).send({ success: false, message: 'Error al traer preguntas' });
         if (!questions) res.status(500).send({ success: false, message: 'No hay preguntas' });
         return res.status(200).send({
@@ -146,6 +146,30 @@ function getPostFavorites(req, res) {
     var itemsPerPage = 15;
 
     Publicacion.find({ isQuestion: false }).sort({ "usersLength": -1 }).populate([{ path: 'idUser' }, { path: 'tipoPublicacion' }]).paginate(page, itemsPerPage, (err, questions, total) => {
+        if (err) return res.status(500).send({ success: false, message: 'Error al traer publicaciones' });
+        if (!questions) res.status(500).send({ success: false, message: 'No hay publicaciones' });
+        console.log(questions);
+
+        return res.status(200).send({
+            total,
+            questions,
+            pages: Math.ceil(total / itemsPerPage)
+        });
+    });
+}
+
+function getPostByTypePost(req, res) {
+    var page = 1;
+    if (req.params.page) {
+        page = req.params.page;
+    }
+    if (!req.params.tipoPublicacion) {
+        return res.status(500).send({ success: false, message: 'Error al traer publicaciones' });
+    }
+    var tipo = req.params.tipoPublicacion;
+    var itemsPerPage = 15;
+
+    Publicacion.find({ isQuestion: false, tipoPublicacion: tipo }).sort({ fecha: 'descending' }).populate([{ path: 'idUser' }, { path: 'tipoPublicacion' }]).paginate(page, itemsPerPage, (err, questions, total) => {
         if (err) return res.status(500).send({ success: false, message: 'Error al traer publicaciones' });
         if (!questions) res.status(500).send({ success: false, message: 'No hay publicaciones' });
         console.log(questions);
@@ -306,5 +330,6 @@ module.exports = {
     editarPost,
     deletePost,
     getSeachPost,
-    getSearchQuestion
+    getSearchQuestion,
+    getPostByTypePost
 }
